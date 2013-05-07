@@ -22,18 +22,14 @@ app.get('/', function(req, res) {
   });
 });
 app.post('/', function(req, res) {
-  console.log("request body=" + JSON.stringify(req.body));
-  /*
   mongo.Db.connect(mongoUri, function (err, db) {
     db.collection('imp', function(er, collection) {
       collection.insert({'time': new Date().getTime(), 'payload': req.body}, {safe: true}, function(er,rs) {
          res.header('Content-Type', 'application/json');
+         res.send({'accepted': true, 'body': req.body});
       });
     });
   });
-  */
-  var rs = {};
-  res.send({'accepted': true, 'data': rs});
 });
 
 var port = process.env.PORT || 5000;
