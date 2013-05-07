@@ -1,0 +1,68 @@
+extends layout
+
+block content
+  div#graph(style='min-width: 400px; height: 400px; margin: 0 auto;')
+    p this is a test
+  script 
+      $('#graph').highcharts({
+            title: {
+                text: 'Temperature'
+            },
+
+            subtitle: {
+                text: 'Source: LM35 on Electric Imp'
+            },
+
+            xAxis: {
+                title: { text: 'Time' },
+                type: 'datetime',
+                tickWidth: 0,
+                gridLineWidth: 1,
+                labels: {
+                    align: 'left',
+                    x: 3,
+                    y: -3
+                }
+            },
+
+            yAxis: [{ // left y axis
+                title: {
+                    text: '°C'
+                },
+                labels: {
+                    align: 'left',
+                    x: 3,
+                    y: 16,
+                    formatter: function() {
+                        return Highcharts.numberFormat(this.value, 0);
+                    }
+                },
+                showFirstLabel: false
+            }],
+
+            legend: {
+                align: 'left',
+                verticalAlign: 'top',
+                y: 20,
+                floating: true,
+                borderWidth: 0
+            },
+
+            tooltip: {
+                shared: true,
+                crosshairs: true
+            },
+
+            plotOptions: {
+                series: { }
+            },
+
+            series: [{
+                name: 'Temperature',
+                lineWidth: 4,
+                marker: {
+                    radius: 4
+                },
+                data: #{data}
+             }]
+        });
