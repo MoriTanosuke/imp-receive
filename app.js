@@ -60,7 +60,11 @@ mongo.Db.connect(mongoUri, function (err, db) {
       collection.find().toArray(function(er,rs) {
          var timeseries = new Array();
          for(i in rs) {
-           timeseries.push([rs[i].time, rs[i].payload.value]);
+           var offset = 0;
+           for(j in rs[i].payload.value) {
+             offset += rs[i].payload.value[j][0];
+             timeseries.push([rs[i].time + offset, rs[i].payload.value[j][1]]);
+           }
          }
          res.header('Content-Type', 'text/html');
          res.render('graph', {title: 'Graph', data: JSON.stringify(timeseries)});
