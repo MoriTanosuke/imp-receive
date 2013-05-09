@@ -9,7 +9,6 @@ var express = require('express')
   , path = require('path')
   , mongo = require('mongodb');
 
-var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/mydb';
 
 var app = express();
 
@@ -30,48 +29,10 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', function(req, res) {
-  mongo.Db.connect(mongoUri, function (err, db) {
-    db.collection('imp', function(er, collection) {
-      collection.find().toArray(function(er,rs) {
-         res.header('Content-Type', 'application/json');
-         if(req.param('cb')) {
-           res.send(req.param('cb') + '(' + JSON.stringify(rs) + ')');
-         } else {
-           res.send(rs);
-         }
-      });
-    });
-  });
-});
-app.post('/', function(req, res) {
-  mongo.Db.connect(mongoUri, function (err, db) {
-    db.collection('imp', function(er, collection) {
-      collection.insert({'time': new Date().getTime(), 'payload': req.body}, {safe: true}, function(er,rs) {
-         res.header('Content-Type', 'application/json');
-         res.send({'accepted': true, 'body': req.body});
-      });
-    });
-  });
-});
-app.get('/graph', function(req, res) {
-mongo.Db.connect(mongoUri, function (err, db) {
-    db.collection('imp', function(er, collection) {
-      collection.find().toArray(function(er,rs) {
-         var timeseries = new Array();
-         for(i in rs) {
-           var offset = 0;
-           for(j in rs[i].payload.value) {
-             offset += rs[i].payload.value[j][0];
-             timeseries.push([rs[i].time + offset, rs[i].payload.value[j][1]]);
-           }
-         }
-         res.header('Content-Type', 'text/html');
-         res.render('graph', {title: 'Graph', data: JSON.stringify(timeseries)});
-      });
-    });
-  });
-  });
+app.post('/', routes.save);
+app.get('/', routes.graph);
+app.get('/graph', routes.graph);
+app.get('/data', routes.raw);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
