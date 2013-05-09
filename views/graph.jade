@@ -2,16 +2,17 @@ extends layout
 
 block content
   div#graph(style='min-width: 400px; height: 400px; margin: 0 auto;')
-    p this is a test
+    p Looks like your browser don't support Javascript and the Highcharts library. I'll give you the raw data.
+    pre #{data}
   script 
       Highcharts.setOptions({global:{useUTC: false}});
       $('#graph').highcharts({
             title: {
-                text: 'Temperature'
+                text: 'Pulse'
             },
 
             subtitle: {
-                text: 'Source: LM35 on Electric Imp'
+                text: 'Source: Sensor on Electric Imp'
             },
 
             xAxis: {
@@ -28,14 +29,14 @@ block content
 
             yAxis: [{ // left y axis
                 title: {
-                    text: '°C'
+                    text: '-'
                 },
                 labels: {
                     align: 'left',
                     x: 3,
                     y: 16,
                     formatter: function() {
-                        return Highcharts.numberFormat(this.value, 2);
+                        return Highcharts.numberFormat(this.value, 0);
                     }
                 },
                 showFirstLabel: false
@@ -59,10 +60,10 @@ block content
             },
 
             series: [{
-                name: 'Temperature',
-                lineWidth: 4,
+                name: 'Pulse',
+                lineWidth: 1,
                 marker: {
-                    radius: 4
+                    radius: 2
                 },
                 data: #{data}
              }]
